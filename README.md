@@ -11,13 +11,13 @@ and shows the returned text.
 ## Requirements
 
 - Python 3.9+
-- `requests`
+- `conduit-sdk` (plus `requests`, installed automatically by the package)
 - Local Conduit server running (`http://localhost:8080`)
 
-Install dependency:
+Install SDK (editable local package):
 
 ```bash
-pip install requests
+python -m pip install -e /home/chinmaykhaladkar/Projects/Project_Conduit/sdk/python
 ```
 
 ## Run
@@ -54,6 +54,7 @@ It also starts the agent pointed at Conduit API automatically (default: `https:/
 - `AGENT_BASE_URL` (default `http://127.0.0.1:54111`)
 - `AGENT_APP_TOKEN` (default `dev-local-token`)
 - `CONDUIT_BASE_URL` (default `https://conduit-urcy.onrender.com`)
+- `CONDUIT_REPO_ROOT` (path to Conduit repo; required only if app should auto-start the Rust agent)
 - `CONDUIT_APP_ID` (default `python-gemini-button`)
 - `CONDUIT_PROVIDER` (default `gemini`)
 - `CONDUIT_MODEL` (default `models/gemini-2.5-flash`)
@@ -63,3 +64,6 @@ It also starts the agent pointed at Conduit API automatically (default: `https:/
 - If not authenticated yet, first click will show device-code instructions.
 - Approve that code in your web app, then click the button again.
 - Ensure app id exists on server (admin bootstrap or create app endpoint).
+- If copied outside the Conduit repo, either:
+  - set `CONDUIT_REPO_ROOT=/path/to/Project_Conduit`, or
+  - run the agent manually (`cargo run -p agent`) before starting the app.

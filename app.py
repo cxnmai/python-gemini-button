@@ -1,16 +1,23 @@
 import os
-import sys
 import threading
 import tkinter as tk
 from pathlib import Path
 from tkinter import ttk
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
-SDK_PATH = REPO_ROOT / "sdk" / "python"
-sys.path.insert(0, str(SDK_PATH))
+try:
+    from conduit_sdk import AgentProcess, ConduitClient, ConduitError
+except Exception as exc:  # pragma: no cover - startup guard
+    raise SystemExit(
+        "conduit_sdk is not installed. Install it with:\n"
+        "  python -m pip install -e /path/to/Project_Conduit/sdk/python\n"
+        f"Original import error: {exc}"
+    )
 
-from conduit_sdk import AgentProcess, ConduitClient, ConduitError  # noqa: E402
-
+DEFAULT_REPO_ROOT = os.getenv("CONDUIT_REPO_ROOT", "").strip()
+if not DEFAULT_REPO_ROOT:
+    candidate = Path(__file__).resolve().parents[2]
+    if (candidate / "Cargo.toml").exists() and (candidate / "agent").exists():
+        DEFAULT_REPO_ROOT = str(candidate)
 
 AGENT_BASE_URL = os.getenv("AGENT_BASE_URL", "http://127.0.0.1:54111").rstrip("/")
 AGENT_APP_TOKEN = os.getenv("AGENT_APP_TOKEN", "dev-local-token")
@@ -21,7 +28,7 @@ PROVIDER = os.getenv("CONDUIT_PROVIDER", "gemini")
 MODEL = os.getenv("CONDUIT_MODEL", "models/gemini-2.5-flash")
 
 AGENT = AgentProcess(
-    repo_root=str(REPO_ROOT),
+    repo_root=DEFAULT_REPO_ROOT or None,
     agent_base_url=AGENT_BASE_URL,
     conduit_base_url=CONDUIT_BASE_URL,
 )
